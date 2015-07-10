@@ -22,14 +22,10 @@ exit - Closes the program
 
 # Correct command sequence: 
 
-| load_map
-
-| show_map
-
-| create_hero
-
-| spawn_hero
-
+| load_map <br/>
+| show_map <br/>
+| create_hero <br/>
+| spawn_hero <br/>
 V move
 
 The other commands are available throughout the whole game.
