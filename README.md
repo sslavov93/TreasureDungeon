@@ -4,12 +4,19 @@ To start the game, start the 'UI.py' file with the python interpreter.
 # Available commands:
 
 load_map <Mapfile> - Creates new dungeon with the map in mapfile
+
 show_map - Displays current dungeon map
+
 create_hero <Name> <Health> <Nickname> - Creates hero with entered attributes
+
 spawn_hero <Username> - Spawns hero with specified username into the dungeon
+
 known_as - Displays name and nickname of hero
+
 move <Username> <Direction> - Moves the hero in the specified direction
+
 help - Displays this message
+
 exit - Closes the program
 
 
