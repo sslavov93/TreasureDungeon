@@ -23,9 +23,13 @@ exit - Closes the program
 # Correct command sequence: 
 
 | load_map
+
 | show_map
+
 | create_hero
+
 | spawn_hero
+
 V move
 
 The other commands are available throughout the whole game.
@@ -36,14 +40,22 @@ The other commands are available throughout the whole game.
 # Map legend:
 
 Z - Map bound
+
 \# - Wall
+
 . - Free spot
+
 S - Player spawn point
+
 N - NPC spawn point
+
 H - Spawned hero
+
 O - Spawned NPC(Orc)
+
 K - Key for treasure chest
+
 C - Treasure chest
 
 
-To complete the game you must obtain the key and then go unlock the chest. Beware of orcs!
+####To complete the game you must obtain the key and then go unlock the chest. Beware of orcs!
