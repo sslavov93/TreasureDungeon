@@ -1,7 +1,7 @@
 To start the game, start the 'UI.py' file with the python interpreter.
 
 
-Available commands:
+# Available commands:
 
 load_map <Mapfile> - Creates new dungeon with the map in mapfile
 show_map - Displays current dungeon map
@@ -13,7 +13,7 @@ help - Displays this message
 exit - Closes the program
 
 
-Correct command sequence: 
+# Correct command sequence: 
 
 | load_map
 | show_map
@@ -26,7 +26,7 @@ The other commands are available throughout the whole game.
 
 
 
-Map legend:
+# Map legend:
 
 Z - Map bound
 \# - Wall
