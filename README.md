@@ -29,7 +29,7 @@ The other commands are available throughout the whole game.
 Map legend:
 
 Z - Map bound
-# - Wall
+\# - Wall
 . - Free spot
 S - Player spawn point
 N - NPC spawn point
