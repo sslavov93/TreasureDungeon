@@ -1,7 +1,5 @@
 # TODO:
-# One method to handle input
-# A method for each of the commands
-# A simplified execution method
+# fix command_list method-values so that they can be called from input method
 
 from weapon import Weapon
 from hero import Hero
