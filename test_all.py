@@ -69,6 +69,12 @@ class TestEntity(unittest.TestCase):
         self.entity.equip_weapon(test_weapon)
         self.assertNotEqual(self.entity.weapon, test_weapon)
 
+    def test_equip_weapon_when_not_armed(self):
+        test_weapon = Weapon('Stick', 5, 0.1)
+        self.entity.weapon = None
+        self.entity.equip_weapon(test_weapon)
+        self.assertEqual(self.entity.weapon, test_weapon)
+
     def test_attack_when_no_weapon_is_equipped(self):
         self.entity.weapon = None
         self.assertEqual(self.entity.attack(), 0)
@@ -332,14 +338,38 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         self.dungeon.move_player('1', 'right')
         self.assertEqual(self.hero.location, [2, 4])
 
-    def test_move_into_battle(self):
+    def test_invalid_hero_move(self):
+        self.dungeon.map = "ZZZ\nZSZ\nZZZ"
+        self.dungeon.spawn('Char', self.hero)
+        result = self.dungeon.move_player("Char", "left")
+        self.assertEqual(result, "Try again.")
+
+    def test_invalid_npc_move(self):
+        self.dungeon.map = "ZZZ\nZNZ\nZZZ"
+        self.dungeon.spawn_npcs()
+        result = self.dungeon.move_npc('NPC1')
+        self.assertEqual(result, None)
+
+    def test_move_hero_into_battle(self):
         mod = "ZZZZ\nZSNZ\nZZZZ"
         self.dungeon.map = mod
         self.dungeon.spawn('1', self.hero)
         self.dungeon.spawn_npcs()
         self.hero.weapon = Weapon('Frostmourne', 40, 0.9)
         result = self.dungeon.move_player('1', 'right')
-        self.assertIn(result, ['1 wins!', '2 wins!'])
+        self.assertIn(result, ['1 wins!', 'NPC1 wins!'])
+
+    def test_move_npc_into_battle(self):
+        mod = "ZZSZ\nZSNS\nZZSZ"
+        self.dungeon.map = mod
+        self.dungeon.spawn('1', self.hero)
+        self.dungeon.spawn_npcs()
+        self.hero.weapon = Weapon('Frostmourne', 40, 0.9)
+
+        result = self.dungeon.move_npc("NPC1")
+        while result is None:
+            result = self.dungeon.move_npc("NPC1")
+        self.assertIn(result, ['1 wins!', 'NPC1 wins!'])
 
     def test_spawn_npcs(self):
         mod = "ZZZZ\nZN.Z\nZ.NZ\nZZZZ"
@@ -394,6 +424,10 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         self.dungeon.spawn_npcs()
         self.dungeon.move_npc(self.dungeon.get_random_npc())
         self.assertEqual(self.dungeon.map, mod.replace('N', 'O'))
+
+    def test_get_invalid_indicator(self):
+        self.invalid = Entity("Name", 20)
+        self.assertEqual(self.dungeon.get_player_indicator(self.invalid), "")
 
 if __name__ == '__main__':
     unittest.main()
