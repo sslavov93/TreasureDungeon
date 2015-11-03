@@ -1,5 +1,9 @@
 # TODO:
 # Add map display after move method execution
+# Cover 100% of the classes
+# Add docstrings
+# Dungeon.py - move npc - if target in...
+# Remove useless string returns
 
 from weapon import Weapon
 from hero import Hero
@@ -13,6 +17,7 @@ class UserInterface():
             "load_map": self.load_map,
             "show_map": self.display_map,
             "create_hero": self.create_character,
+            "known_as": self.known_as,
             "spawn_hero": self.spawn_character,
             "move": self.move_character,
             "heal": self.heal_character,
@@ -33,10 +38,15 @@ help - Displays this message
 exit - Closes the program"""
 
     def start_game(self):
+        print("Welcome. Type 'help' for available commands")
         while self.exit is False:
-            execute = self.command_list[self.get_input_command()[0]]
-            output = execute()
-            print(output) if output is not None else None
+            command = self.get_input_command()
+            if command[0] in self.command_list:
+                execute = self.command_list[command[0]]
+                output = execute()
+                print(output) if output is not None else None
+            else:
+                print("Invalid command. Type 'help' for available commands.")
 
     def get_input_command(self):
         self.input = input('--> ').strip().split(' ')
@@ -48,12 +58,15 @@ exit - Closes the program"""
             self.map_loaded = True
 
     def display_map(self):
-        return self.dungeon.map
+        return self.dungeon.print_map()
 
     def create_character(self):
         self.char = Hero(self.input[1], int(self.input[2]), self.input[3])
         self.char.weapon = Weapon('Ashbringer', 40, 0.8)
         self.is_created = True
+
+    def known_as(self):
+        return self.char.known_as()
 
     def spawn_character(self):
         if self.is_created is True:
@@ -76,13 +89,14 @@ exit - Closes the program"""
             return self.dungeon.move_player(self.input[1], self.input[2])
             to_move = self.dungeon.get_random_npc()
             if not self.dungeon.ingame[to_move].is_alive():
-                self.dungeon.ingame = {
-                    i: self.dungeon.ingame[i] for i in self.dungeon.ingame if i != 0}
+                self.dungeon.ingame = {i: self.dungeon.ingame[i]
+                                       for i in self.dungeon.ingame
+                                       if i != 0}
                 self.dungeon.npcs = {i: self.dungeon.npcs[i]
                                      for i in self.dungeon.npcs if i != 0}
             else:
                 return self.dungeon.move_npc(to_move)
-            return self.dungeon.print_map()
+            return self.display_map()
 
     def heal_character(self):
         if self.is_created and self.map_loaded:
@@ -98,5 +112,5 @@ exit - Closes the program"""
         return "Goodbye!"
 
 
-asd = UserInterface()
-print(asd.start_game())
+game = UserInterface()
+game.start_game()
