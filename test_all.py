@@ -273,6 +273,16 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         result = self.dungeon.print_map()
         self.assertEqual(result, 'No valid map loaded.')
 
+    def test_print_map_after_battle(self):
+        hero = Hero("Alan", 1, "Turing")
+        hero.weapon = Weapon("Stick", 1, 0.1)
+        self.dungeon.map = "ZSNZ"
+        self.dungeon.spawn("1", hero)
+        self.dungeon.spawn_npcs()
+
+        self.dungeon.move_player("1", "right")
+        self.assertEqual(self.dungeon.map, "Z.OZ")
+
     def test_valid_spawn(self):
         self.dungeon.spawn('Player 1', self.hero)
         contents = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
@@ -295,16 +305,26 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         self.assertEqual(result, 'No free spawn slot.')
 
     def test_map_conversion(self):
-        actual = [['Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'], 
-        ['Z', '#', '.', '.', '.', '#', '.', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', 'Z'],
-        ['Z', '#', '.', 'S', '.', '#', '.', '.', '.', '.', '.', 'N', '.', '.', '.', '.', 'K', '.', 'Z'],
-        ['Z', '#', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.', '.', '.', '#', '#', '#', '#', 'Z'],
-        ['Z', '#', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.', '.', '.', 'N', '.', '.', '#', 'Z'],
-        ['Z', '.', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.', '.', '.', '.', '#', '.', '#', 'Z'],
-        ['Z', '#', '.', '.', '.', '.', '.', '.', '#', '.', '.', 'N', '.', '.', '.', '#', '.', '#', 'Z'],
-        ['Z', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', 'C', '#', 'Z'],
-        ['Z', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '.', '.', 'Z'],
-        ['Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z']]
+        actual = [['Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z',
+                   'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'],
+                  ['Z', '#', '.', '.', '.', '#', '.', '#', '#', '.', '#', '#',
+                   '#', '#', '#', '#', '#', '#', 'Z'],
+                  ['Z', '#', '.', 'S', '.', '#', '.', '.', '.', '.', '.', 'N',
+                   '.', '.', '.', '.', 'K', '.', 'Z'],
+                  ['Z', '#', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.',
+                   '.', '.', '#', '#', '#', '#', 'Z'],
+                  ['Z', '#', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.',
+                   '.', '.', 'N', '.', '.', '#', 'Z'],
+                  ['Z', '.', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.',
+                  '.', '.', '.', '#', '.', '#', 'Z'],
+                  ['Z', '#', '.', '.', '.', '.', '.', '.', '#', '.', '.', 'N',
+                   '.', '.', '.', '#', '.', '#', 'Z'],
+                  ['Z', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                   '.', '.', '.', '#', 'C', '#', 'Z'],
+                  ['Z', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+                   '#', '#', '.', '.', '.', '.', 'Z'],
+                  ['Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z',
+                   'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z']]
         result = self.dungeon.convert_map_to_changeable_tiles()
         self.assertEqual(result, actual)
 
@@ -317,9 +337,21 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         result = self.dungeon.get_position_in_map('S')
         self.assertEqual(result, [2, 3])
 
-    def test_destination_coordinates(self):
+    def test_destination_coordinates_down(self):
         result = self.dungeon.get_destination_coordinates([4, 4], 'down')
         self.assertEqual(result, [5, 4])
+
+    def test_destination_coordinates_up(self):
+        result = self.dungeon.get_destination_coordinates([4, 4], 'up')
+        self.assertEqual(result, [3, 4])
+
+    def test_destination_coordinates_left(self):
+        result = self.dungeon.get_destination_coordinates([4, 4], 'left')
+        self.assertEqual(result, [4, 3])
+
+    def test_destination_coordinates_right(self):
+        result = self.dungeon.get_destination_coordinates([4, 4], 'right')
+        self.assertEqual(result, [4, 5])
 
     def test_check_move_with_wrong_direction(self):
         result = self.dungeon.check_move('.', 'test')
@@ -344,8 +376,32 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         result = self.dungeon.move_player("Char", "left")
         self.assertEqual(result, "Try again.")
 
-    def test_invalid_npc_move(self):
+    def test_move_npc_into_border(self):
         self.dungeon.map = "ZZZ\nZNZ\nZZZ"
+        self.dungeon.spawn_npcs()
+        result = self.dungeon.move_npc('NPC1')
+        self.assertEqual(result, None)
+
+    def test_move_npc_into_key(self):
+        self.dungeon.map = "KKK\nKNK\nKKK"
+        self.dungeon.spawn_npcs()
+        result = self.dungeon.move_npc('NPC1')
+        self.assertEqual(result, None)
+
+    def test_move_npc_into_chest(self):
+        self.dungeon.map = "CCC\nCNC\nCCC"
+        self.dungeon.spawn_npcs()
+        result = self.dungeon.move_npc('NPC1')
+        self.assertEqual(result, None)
+
+    def test_move_npc_into_wall(self):
+        self.dungeon.map = "###\n#N#\n###"
+        self.dungeon.spawn_npcs()
+        result = self.dungeon.move_npc('NPC1')
+        self.assertEqual(result, None)
+
+    def test_move_npc_into_orc(self):
+        self.dungeon.map = "OOO\nONO\nOOO"
         self.dungeon.spawn_npcs()
         result = self.dungeon.move_npc('NPC1')
         self.assertEqual(result, None)
@@ -363,12 +419,12 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
         mod = "ZZSZ\nZSNS\nZZSZ"
         self.dungeon.map = mod
         self.dungeon.spawn('1', self.hero)
+        self.dungeon.spawn('2', Hero("Tirion", 1, "Fondring"))
+        self.dungeon.spawn('3', Hero("Lich", 1, "King"))
+        self.dungeon.spawn('4', Hero("Bat", 1, "Svetlio"))
         self.dungeon.spawn_npcs()
-        self.hero.weapon = Weapon('Frostmourne', 40, 0.9)
 
         result = self.dungeon.move_npc("NPC1")
-        while result is None:
-            result = self.dungeon.move_npc("NPC1")
         self.assertIn(result, ['1 wins!', 'NPC1 wins!'])
 
     def test_spawn_npcs(self):
