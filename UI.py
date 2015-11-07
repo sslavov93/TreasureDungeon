@@ -1,10 +1,3 @@
-# TODO:
-# Add map display after move method execution
-# Cover 100% of the classes
-# Add docstrings
-# Dungeon.py - move npc - if target in...
-# Remove useless string returns
-
 from weapon import Weapon
 from hero import Hero
 from dungeon import Dungeon
