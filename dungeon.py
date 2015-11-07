@@ -101,13 +101,13 @@ class Dungeon():
     def check_move(self, target, direction):
         directions = ['left', 'right', 'up', 'down']
         if direction not in directions:
-            print("Wrong direction given.")
+            # print("Wrong direction given.")
             return False
         if target == "#":
-            print("You will hit the wall.")
+            # print("You will hit the wall.")
             return False
         if target == 'Z':
-            print('Out of bounds.')
+            # print('Out of bounds.')
             return False
         return True
 
@@ -194,8 +194,7 @@ class Dungeon():
         if not self.check_move(target, direction):
             return
 
-        if (target == 'Z' or target == '#' or target == 'C'
-                or target == 'K' or target == 'O'):
+        if target in ['Z', '#', 'C', 'K', 'O']:
             return
         elif target == '.':
             self.regular_move(npc_name, dest, output, char_location)
