@@ -7,7 +7,11 @@ from random import randint
 
 
 class Dungeon():
+    """Base class. Represents the dungeon in
+    which the player would start the game
 
+    Args:
+        map - /full/path/to/map/file.txt"""
     def __init__(self, map):
         self.map = self.load_map(map)
         self.ingame = {}
@@ -16,6 +20,10 @@ class Dungeon():
         self.unlocked = False
 
     def load_map(self, map_file):
+        """Loads dungeon map from specified absolute path in the harddisk
+
+        Args:
+            map_file - /full/path/to/map/file.txt"""
         if not os.path.exists(map_file):
             return ''
         with open(map_file, 'r') as f:
@@ -23,17 +31,26 @@ class Dungeon():
         return contents
 
     def print_map(self):
+        """Returns current loaded dungeon map"""
         if not self.map:
             return 'No valid map loaded.'
         return self.map
 
     def convert_map_to_changeable_tiles(self):
+        """Helper method. Converts a single string
+        to list of lists of strings"""
         new_map = []
         for item in self.map.split():
             new_map.append(list(item))
         return new_map
 
     def revert_map_to_string_state(self, custom_map):
+        """Helper method. Converts list of lists of strings
+        to a single string
+
+        Args:
+            custom_map - List of lists of strings,
+                representing the currently loaded Dungeon map"""
         string_map = ''
         for item in custom_map:
             for char in item:
@@ -41,16 +58,27 @@ class Dungeon():
             string_map += '\n'
         return string_map[:-1]
 
-    def get_player_indicator(self, player):
+    def get_entity_indicator(self, entity):
+        """Helper method. Returns the indicator of the current busy entity
+
+        Args:
+            entity - Entity object with indicator to be fetched. Type(Orc/Hero)
+
+        'H' - Hero
+        'O' - Orc"""
         entities = ['O', 'H']
-        if isinstance(player, Orc):
+        if isinstance(entity, Orc):
             return entities[0]
-        elif isinstance(player, Hero):
+        elif isinstance(entity, Hero):
             return entities[1]
         else:
             return ''
 
     def get_position_in_map(self, ind):
+        """Returns the 2-D coordinates of the specified entity indicator
+
+        Args:
+            ind - Indicator of current entity. Type(String)"""
         output = self.convert_map_to_changeable_tiles()
         for row in range(0, len(output)):
             for col in range(0, len(output[0])):
@@ -58,6 +86,12 @@ class Dungeon():
                     return [row, col]
 
     def spawn(self, player_name, entity):
+        """Spawns a new Hero into the Dungeon field
+
+        Args:
+            player_name - The name that represents the Hero character
+                on the Dungeon map. Type(String). This is decided by the player
+            entity - The object that represents the Hero. Type(Hero(Entity))"""
         if player_name in self.ingame:
             return 'Character is already spawned.'
         indicator = self.get_player_indicator(entity)
@@ -70,6 +104,7 @@ class Dungeon():
             return 'No free spawn slot.'
 
     def spawn_npcs(self):
+        """Spawns NPCs into the Dungeon field"""
         free_spaces = True
         counter = 1
         while free_spaces:
@@ -87,6 +122,13 @@ class Dungeon():
                 free_spaces = False
 
     def get_destination_coordinates(self, current_location, direction):
+        """Get the coordinates of the direction
+            in which an entity decides to move
+
+        Args:
+            current_location - Current coordinates of entity. Type(Tuple)
+            direction - One of 'left', 'right', 'up', 'down'. Type(String)
+        """
         current = current_location[:]
         if direction == "up":
             current[0] -= 1
@@ -99,6 +141,17 @@ class Dungeon():
         return current
 
     def check_move(self, target, direction):
+        """Check if desired move is valid
+
+        Args:
+            target - The entity that will be performing the move
+            direction - The direction in terms of the dungeon realm
+                (available directions - 'left', 'right', 'up', 'down')
+
+        Map Legend:
+        # - Dungeon wall
+        Z - Dungeon boundary
+        """
         directions = ['left', 'right', 'up', 'down']
         if direction not in directions:
             # print("Wrong direction given.")
@@ -112,6 +165,13 @@ class Dungeon():
         return True
 
     def regular_move(self, name, dest, otpt, chr_loc):
+        """Perform a regular move
+
+        Args:
+            name - Name of the Entity that would move. Type(String)
+            dest - Coordinates of move direction. Type(Tuple)
+            otpt - Converted map. Type(List of Lists of Strings)
+            chr_loc - Current coordinates of entity. Type(Tuple)"""
         self.ingame[name].location = dest
         otpt[chr_loc[0]][chr_loc[1]], otpt[dest[0]][dest[1]] = otpt[
             dest[0]][dest[1]], otpt[chr_loc[0]][chr_loc[1]]
@@ -119,15 +179,26 @@ class Dungeon():
         return 'Successful Move.'
 
     def obtain_key(self, name, dest, otpt, chr_loc):
-        self.key_obtained = True
+        """Get key that unlocks chest (and ultimately wins the game)
+
+        Args:
+            name - Name of the Entity that gets the key. Type(String)
+            dest - Coordinates of the key. Type(Tuple)
+            otpt - Converted map. Type(List of Lists of Strings)
+            chr_loc - Current coordinates of Entity. Type(Tuple)"""
         self.ingame[name].location = dest
         otpt[chr_loc[0]][chr_loc[1]], otpt[dest[0]][dest[1]] = otpt[
             dest[0]][dest[1]], otpt[chr_loc[0]][chr_loc[1]]
         self.map = self.revert_map_to_string_state(otpt)
         self.map = self.map.replace('K', '.')
+        self.key_obtained = True
         return 'Key Obtained.'
 
     def unlock_chest(self, output):
+        """Unlocks chest and wins the game
+
+        Args:
+            output - Converted map. Type(List of Lists of Strings)"""
         self.map = self.revert_map_to_string_state(output)
         self.map = self.map.replace('H', '.')
         self.map = self.map.replace('C', 'H')
@@ -135,6 +206,14 @@ class Dungeon():
         return 'Chest Unlocked.'
 
     def battle(self, name, dest, otpt, chr_loc):
+        """Invoked when an Entity's destination map block
+        is occupied by the opposite entity type
+
+        Args:
+            name - Name of the Entity that walks over. Type(String)
+            dest - Coordinates of move direction. Type(Tuple)
+            otpt - Converted map. Type(List of Lists of Strings)
+            chr_loc - Current coordinates of entity. Type(Tuple)"""
         to_fight = None
         for each in self.ingame:
             if self.ingame[each].location == dest:
@@ -154,6 +233,12 @@ class Dungeon():
                 return "{} wins!".format(item)
 
     def move_player(self, player_name, direction):
+        """Moves the Player's character to a specified direction
+
+        Args:
+            player_name - The name that represents the Hero character
+                on the Dungeon map. Type(String). This is decided by the player
+            direction - Specified move direction of the Entity. Type(String)"""
         output = self.convert_map_to_changeable_tiles()
         dest = self.get_destination_coordinates(
             self.ingame[player_name].location, direction)
@@ -177,12 +262,17 @@ class Dungeon():
             return self.battle(player_name, dest, output, char_location)
 
     def get_random_npc(self):
+        """Determine which NPC (if more than one are present) would move"""
         monsters = []
         for each in self.npcs:
             monsters.append(each)
         return monsters[randint(0, len(monsters) - 1)]
 
     def move_npc(self, npc_name):
+        """Attempts to move an NPC into a randomly selected direction
+
+        Args:
+            npc_name - Name of spawned NPC to be moved. Type(String)"""
         dirs = ['up', 'down', 'left', 'right']
         direction = dirs[randint(0, len(dirs) - 1)]
         output = self.convert_map_to_changeable_tiles()
