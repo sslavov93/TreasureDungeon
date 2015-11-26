@@ -483,7 +483,7 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
 
     def test_get_invalid_indicator(self):
         self.invalid = Entity("Name", 20)
-        self.assertEqual(self.dungeon.get_player_indicator(self.invalid), "")
+        self.assertEqual(self.dungeon.get_entity_indicator(self.invalid), "")
 
 if __name__ == '__main__':
     unittest.main()
