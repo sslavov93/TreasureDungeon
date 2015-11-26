@@ -94,7 +94,7 @@ class Dungeon():
             entity - The object that represents the Hero. Type(Hero(Entity))"""
         if player_name in self.ingame:
             return 'Character is already spawned.'
-        indicator = self.get_player_indicator(entity)
+        indicator = self.get_entity_indicator(entity)
         if 'S' in self.map and indicator:
             self.ingame[player_name] = entity
             entity.location = self.get_position_in_map('S')
@@ -222,7 +222,7 @@ class Dungeon():
         battle = Fight(self.ingame[name], to_fight)
         battle_result = battle.simulate_fight()
         otpt[chr_loc[0]][chr_loc[1]] = "."
-        otpt[dest[0]][dest[1]] = self.get_player_indicator(battle_result)
+        otpt[dest[0]][dest[1]] = self.get_entity_indicator(battle_result)
         if self.ingame[name] == battle_result:
             self.ingame[name].location = dest
         else:
