@@ -1,5 +1,45 @@
 TODO:
 
-# Add docstrings
 # Add map display after move method execution
-# Start writing MAP Creator
+# Utilize the following examples for map validator tests
+
+# m_starts = "multiple_starts.txt"
+# n_starts = "no_start.txt"
+# m_chests = "multiple_chests.txt"
+# n_chests = "no_chest.txt"
+# m_keys = "multiple_keys.txt"
+# n_key = "no_keys.txt"
+# n_npcs = "no_npcs.txt"
+# o_npc = "one_npc.txt"
+# rect_c = "rectangle_corr.txt"
+# rect_inc = "rectangle_incorr.txt"
+# bord_c = "borders_corr.txt"
+# bord_inc = "borders_incorr.txt"
+# correct = "correct.txt"
+
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + m_starts)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + n_starts)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + m_chests)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + n_chests)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + m_keys)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + n_key)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + n_npcs)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + rect_inc)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + bord_inc)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + o_npc)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + bord_c)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + rect_c)
+# print(dung.validate_map())
+# dung = MapValidator("/home/sslavov93/Desktop/invalid_maps/" + correct)
+# print(dung.check_dungeon_borders())
