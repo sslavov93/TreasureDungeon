@@ -1,6 +1,7 @@
 from weapon import Weapon
 from hero import Hero
 from dungeon import Dungeon
+from map_validator import MapValidator
 
 
 class UserInterface():
@@ -20,6 +21,7 @@ class UserInterface():
         self.exit = False
         self.is_created = False
         self.map_loaded = False
+        self.validator = None
         self.input = None
         self.help = """load_map <mapfile.txt> - Creates new dungeon with the map in mapfile
 show_map - Displays current dungeon map
@@ -42,20 +44,25 @@ exit - Closes the program"""
                 print("Invalid command. Type 'help' for available commands.")
 
     def get_input_command(self):
-        self.input = input('--> ').strip().split(' ')
+        self.input = input("--> ").strip().split(" ")
         return self.input
 
     def load_map(self):
-        self.dungeon = Dungeon(self.input[1])
-        if self.dungeon.map:
-            self.map_loaded = True
+        map_path = self.input[1]
+        self.validator = MapValidator(map_path)
+        if self.validator.validate_map():
+            self.dungeon = Dungeon(map_path)
+            if self.dungeon.map:
+                self.map_loaded = True
+        else:
+            print ("Your map is not valid and has not been loaded.")
 
     def display_map(self):
         return self.dungeon.print_map()
 
     def create_character(self):
         self.char = Hero(self.input[1], int(self.input[2]), self.input[3])
-        self.char.weapon = Weapon('Ashbringer', 40, 0.8)
+        self.char.weapon = Weapon("Ashbringer", 40, 0.8)
         self.is_created = True
 
     def known_as(self):
@@ -66,19 +73,19 @@ exit - Closes the program"""
             self.dungeon.spawn(self.input[1], self.char)
             self.dungeon.spawn_npcs()
         else:
-            return 'No created characters.'
+            return "No created characters."
 
     def move_character(self):
         if self.input[1] not in self.dungeon.ingame:
-            return 'Player name is incorrect.'
+            return "Player name is incorrect."
 
         elif not self.dungeon.ingame[self.input[1]].is_alive():
             self.exit = True
-            return 'Your character is dead. Game over.'
+            return "Your character is dead. Game over."
         else:
             if self.dungeon.unlocked:
                 self.exit = True
-                return 'Game Over. You have won.'
+                return "Game Over. You have won."
             return self.dungeon.move_player(self.input[1], self.input[2])
             to_move = self.dungeon.get_random_npc()
             if not self.dungeon.ingame[to_move].is_alive():
@@ -95,7 +102,7 @@ exit - Closes the program"""
         if self.is_created and self.map_loaded:
             self.char.health = self.char.max_health
         else:
-            return 'No created characters.'
+            return "No created characters."
 
     def help_message(self):
         return self.help
