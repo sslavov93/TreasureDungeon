@@ -50,12 +50,13 @@ exit - Closes the program"""
     def load_map(self):
         map_path = self.input[1]
         self.validator = MapValidator(map_path)
-        if self.validator.validate_map():
+        if not self.validator.validate_map():
+            return self.validator.generate_message()
+        else:
             self.dungeon = Dungeon(map_path)
             if self.dungeon.map:
                 self.map_loaded = True
-        else:
-            print ("Your map is not valid and has not been loaded.")
+                return self.validator.generate_message()
 
     def display_map(self):
         return self.dungeon.print_map()
