@@ -119,5 +119,5 @@ class MapValidator():
         if not self.rectangular:
             message += "Your dungeon is not rectangular.\n"
         if not self.borders:
-            message += "There is an error with the dungeon borders.\n"
+            message += "There is an error with the dungeon borders."
         return message

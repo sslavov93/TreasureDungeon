@@ -4,11 +4,12 @@ from hero import Hero
 from orc import Orc
 from fight import Fight
 from dungeon import Dungeon
+from map_validator import MapValidator
 from os import remove
 import unittest
 
 
-class TestEntity(unittest.TestCase):
+class EntityTest(unittest.TestCase):
 
     def setUp(self):
         self.entity = Entity('Arthas', 200)
@@ -83,7 +84,7 @@ class TestEntity(unittest.TestCase):
         self.assertIn(self.entity.attack(), [35, 70])
 
 
-class TestOrc(unittest.TestCase):
+class OrcTest(unittest.TestCase):
 
     def setUp(self):
         self.orc = Orc('Thrall', 200, 1.7)
@@ -131,7 +132,7 @@ class TestOrc(unittest.TestCase):
         self.assertIn(self.orc.attack(), [35 * 1.7, 70 * 1.7])
 
 
-class TestHero(unittest.TestCase):
+class HeroTest(unittest.TestCase):
 
     def setUp(self):
         self.hero = Hero('Arthas', 1000, 'Lich King')
@@ -170,7 +171,7 @@ class TestHero(unittest.TestCase):
         self.assertIn(self.hero.attack(), [35, 70])
 
 
-class TestWeapon(unittest.TestCase):
+class WeaponTest(unittest.TestCase):
 
     def setUp(self):
         self.weapon = Weapon('Sword', 11, 0.4)
@@ -192,7 +193,7 @@ class TestWeapon(unittest.TestCase):
         self.assertIn(self.weapon.critical_hit(), [True, False])
 
 
-class TestFight(unittest.TestCase):
+class FightTest(unittest.TestCase):
 
     def setUp(self):
         self.hero = Hero('Arthas', 660, 'Lich King')
@@ -227,7 +228,7 @@ class TestFight(unittest.TestCase):
         self.assertIn(result, [self.fight.orc, self.hero])
 
 
-class TestDungeon(unittest.TestCase):
+class DungeonTest(unittest.TestCase):
 
     def setUp(self):
         self.mapfile = 'testmap.txt'
@@ -484,6 +485,188 @@ Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
     def test_get_invalid_indicator(self):
         self.invalid = Entity("Name", 20)
         self.assertEqual(self.dungeon.get_entity_indicator(self.invalid), "")
+
+
+class MapValidatorTest(unittest.TestCase):
+
+    def setUp(self):
+        self.validator = MapValidator("")
+        self.validator.map = "Map"
+
+    def test_read_file(self):
+        correct_map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+        with open("test_map.txt", "w+") as mapfile:
+            mapfile.write(correct_map)
+
+        contents = self.validator.read_file("test_map.txt")
+        remove("test_map.txt")
+        self.assertEqual(correct_map, contents)
+
+    def test_valid_spawn_slot_count(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.check_player_spawn())
+
+    def test_invalid_spawn_slot_count_no_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#...#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_player_spawn())
+
+    def test_invalid_spawn_slot_count_multiple_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#..S...#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_player_spawn())
+
+    def test_valid_key_slot_count(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.check_key_is_present())
+
+    def test_invalid_key_slot_count_no_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N......Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_key_is_present())
+
+    def test_invalid_key_slot_count_multiple_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ.......K......#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_key_is_present())
+
+    def test_valid_chest_slot_count(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.check_chest_is_present())
+
+    def test_invalid_chest_slot_count_no_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#.#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_chest_is_present())
+
+    def test_invalid_chest_slot_count_multiple_slots(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ....C.........#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_chest_is_present())
+
+    def test_valid_dungeon_shape(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.check_dungeon_is_rectangular())
+
+    def test_invalid_dungeon_shape(self):
+        self.validator.map = """ZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#....####Z\nZ#...#..#.....N..#Z
+Z....#..#.#Z\nZ#.....#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_dungeon_is_rectangular())
+
+    def test_valid_dungeon_borders(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.check_dungeon_borders())
+
+    def test_invalid_upper_dungeon_border(self):
+        self.validator.map = """Z........ZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_dungeon_borders())
+
+    def test_invalid_lower_dungeon_border(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZ........ZZZZZZ"""
+
+        self.assertFalse(self.validator.check_dungeon_borders())
+
+    def test_invalid_middle_dungeon_border(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####\nZ#...#..#.....N..#Z
+....#..#......#.#Z\nZ#......#..N...#.#\nZ..............#C#Z
+..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertFalse(self.validator.check_dungeon_borders())
+
+    def test_map_validate_correct_mapfile(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.assertTrue(self.validator.validate_map())
+
+    def test_map_validate_incorrect_mapfile(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#......K.Z\nZ#...#..#.....####Z\nZ#...#..#....#Z
+Z....#..#......#.#Z\nZ#..S...#.....#.#Z\nZ..............#K#Z
+Z..###########..\nZZZZZZZZZZZZZ"""
+        self.assertFalse(self.validator.validate_map())
+
+    def test_generate_message_for_correct_map(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#.....N....K.Z\nZ#...#..#.....####Z\nZ#...#..#.....N..#Z
+Z....#..#......#.#Z\nZ#......#..N...#.#Z\nZ..............#C#Z
+Z..###########....Z\nZZZZZZZZZZZZZZZZZZZ"""
+
+        self.validator.validate_map()
+        self.assertEqual(
+            self.validator.generate_message(),
+            "Your map is valid. Dungeon loaded.")
+
+    def test_generate_message_for_incorrect_map(self):
+        self.validator.map = """ZZZZZZZZZZZZZZZZZZZ\nZ#...#.##.########Z
+Z#.S.#......K.Z\nZ#...#..#.....####Z\nZ#...#..#....#Z
+Z....#..#......#.#Z\nZ#..S...#.....#.#Z\nZ..............#K#Z
+Z..###########..\nZZZZZZZZZZZZZ"""
+
+        self.validator.validate_map()
+        self.assertEqual(
+            self.validator.generate_message(),
+            """There is an error with the player spawn slots.
+There is an error with the NPC spawn slots.
+There is an error with the key slot.
+There is an error with the chest slot.
+Your dungeon is not rectangular.
+There is an error with the dungeon borders.""")
+
 
 if __name__ == '__main__':
     unittest.main()
