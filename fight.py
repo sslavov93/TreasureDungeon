@@ -22,7 +22,7 @@ class Fight():
     def simulate_fight(self):
         """Simulates fight between the two entities and determines a winner"""
         if self.hero.weapon is None and self.orc.weapon is None:
-            return 'No winner'
+            return "No winner"
 
         (attacker, defender) = self.coin_toss()
 

@@ -14,4 +14,4 @@ class Hero(Entity):
 
     def known_as(self):
         """Returns the Hero's name and nickname"""
-        return '{} the {}'.format(self.name, self.nickname)
+        return "{} the {}".format(self.name, self.nickname)

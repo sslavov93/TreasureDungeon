@@ -25,15 +25,15 @@ class Dungeon():
         Args:
             map_file - /full/path/to/map/file.txt"""
         if not os.path.exists(map_file):
-            return ''
-        with open(map_file, 'r') as f:
+            return ""
+        with open(map_file, "r") as f:
             contents = f.read()
         return contents
 
     def print_map(self):
         """Returns current loaded dungeon map"""
         if not self.map:
-            return 'No valid map loaded.'
+            return "No valid map loaded."
         return self.map
 
     def convert_map_to_changeable_tiles(self):
@@ -51,11 +51,11 @@ class Dungeon():
         Args:
             custom_map - List of lists of strings,
                 representing the currently loaded Dungeon map"""
-        string_map = ''
+        string_map = ""
         for item in custom_map:
             for char in item:
                 string_map += char
-            string_map += '\n'
+            string_map += "\n"
         return string_map[:-1]
 
     def get_entity_indicator(self, entity):
@@ -66,13 +66,13 @@ class Dungeon():
 
         'H' - Hero
         'O' - Orc"""
-        entities = ['O', 'H']
+        entities = ["O", "H"]
         if isinstance(entity, Orc):
             return entities[0]
         elif isinstance(entity, Hero):
             return entities[1]
         else:
-            return ''
+            return ""
 
     def get_position_in_map(self, ind):
         """Returns the 2-D coordinates of the specified entity indicator
@@ -93,30 +93,30 @@ class Dungeon():
                 on the Dungeon map. Type(String). This is decided by the player
             entity - The object that represents the Hero. Type(Hero(Entity))"""
         if player_name in self.ingame:
-            return 'Character is already spawned.'
+            return "Character is already spawned."
         indicator = self.get_entity_indicator(entity)
-        if 'S' in self.map and indicator:
+        if "S" in self.map and indicator:
             self.ingame[player_name] = entity
-            entity.location = self.get_position_in_map('S')
-            self.map = (self.map[:self.map.find('S')] + indicator +
-                        self.map[self.map.find('S') + 1:])
+            entity.location = self.get_position_in_map("S")
+            self.map = (self.map[:self.map.find("S")] + indicator +
+                        self.map[self.map.find("S") + 1:])
         else:
-            return 'No free spawn slot.'
+            return "No free spawn slot."
 
     def spawn_npcs(self):
         """Spawns NPCs into the Dungeon field"""
         free_spaces = True
         counter = 1
         while free_spaces:
-            if 'N' in self.map:
-                npc = Orc('NPC' + str(counter), 250, 1.4)
-                wep = Weapon('Axe' + str(counter), 15, 0.7)
+            if "N" in self.map:
+                npc = Orc("NPC" + str(counter), 250, 1.4)
+                wep = Weapon("Axe" + str(counter), 15, 0.7)
                 npc.weapon = wep
                 self.npcs[npc.name] = npc
                 self.ingame[npc.name] = npc
-                npc.location = self.get_position_in_map('N')
-                self.map = (self.map[:self.map.find('N')] + 'O' +
-                            self.map[self.map.find('N') + 1:])
+                npc.location = self.get_position_in_map("N")
+                self.map = (self.map[:self.map.find("N")] + "O" +
+                            self.map[self.map.find("N") + 1:])
                 counter += 1
             else:
                 free_spaces = False
@@ -152,14 +152,14 @@ class Dungeon():
         # - Dungeon wall
         Z - Dungeon boundary
         """
-        directions = ['left', 'right', 'up', 'down']
+        directions = ["left", "right", "up", "down"]
         if direction not in directions:
             # print("Wrong direction given.")
             return False
         if target == "#":
             # print("You will hit the wall.")
             return False
-        if target == 'Z':
+        if target == "Z":
             # print('Out of bounds.')
             return False
         return True
@@ -176,7 +176,7 @@ class Dungeon():
         otpt[chr_loc[0]][chr_loc[1]], otpt[dest[0]][dest[1]] = otpt[
             dest[0]][dest[1]], otpt[chr_loc[0]][chr_loc[1]]
         self.map = self.revert_map_to_string_state(otpt)
-        return 'Successful Move.'
+        return "Successful Move."
 
     def obtain_key(self, name, dest, otpt, chr_loc):
         """Get key that unlocks chest (and ultimately wins the game)
@@ -190,9 +190,9 @@ class Dungeon():
         otpt[chr_loc[0]][chr_loc[1]], otpt[dest[0]][dest[1]] = otpt[
             dest[0]][dest[1]], otpt[chr_loc[0]][chr_loc[1]]
         self.map = self.revert_map_to_string_state(otpt)
-        self.map = self.map.replace('K', '.')
+        self.map = self.map.replace("K", ".")
         self.key_obtained = True
-        return 'Key Obtained.'
+        return "Key Obtained."
 
     def unlock_chest(self, output):
         """Unlocks chest and wins the game
@@ -200,10 +200,10 @@ class Dungeon():
         Args:
             output - Converted map. Type(List of Lists of Strings)"""
         self.map = self.revert_map_to_string_state(output)
-        self.map = self.map.replace('H', '.')
-        self.map = self.map.replace('C', 'H')
+        self.map = self.map.replace("H", ".")
+        self.map = self.map.replace("C", "H")
         self.unlocked = True
-        return 'Chest Unlocked.'
+        return "Chest Unlocked."
 
     def battle(self, name, dest, otpt, chr_loc):
         """Invoked when an Entity's destination map block
@@ -226,7 +226,7 @@ class Dungeon():
         if self.ingame[name] == battle_result:
             self.ingame[name].location = dest
         else:
-            self.map = self.map.replace('H', '.')
+            self.map = self.map.replace("H", ".")
         for item in self.ingame:
             if self.ingame[item] == battle_result:
                 self.map = self.revert_map_to_string_state(otpt)
@@ -247,18 +247,18 @@ class Dungeon():
         target = output[dest[0]][dest[1]]
 
         if not self.check_move(target, direction):
-            return 'Try again.'
+            return "Try again."
 
-        if target == 'K':
+        if target == "K":
             return self.obtain_key(player_name, dest, output, char_location)
-        elif target == 'C':
+        elif target == "C":
             if self.key_obtained:
                 return self.unlock_chest(output)
             else:
-                return 'You must get the key first.'
+                return "You must get the key first."
         elif target == ".":
             return self.regular_move(player_name, dest, output, char_location)
-        elif target == 'O':
+        elif target == "O":
             return self.battle(player_name, dest, output, char_location)
 
     def get_random_npc(self):
@@ -273,7 +273,7 @@ class Dungeon():
 
         Args:
             npc_name - Name of spawned NPC to be moved. Type(String)"""
-        dirs = ['up', 'down', 'left', 'right']
+        dirs = ["up", "down", "left", "right"]
         direction = dirs[randint(0, len(dirs) - 1)]
         output = self.convert_map_to_changeable_tiles()
         dest = self.get_destination_coordinates(
@@ -284,9 +284,9 @@ class Dungeon():
         if not self.check_move(target, direction):
             return
 
-        if target in ['Z', '#', 'C', 'K', 'O']:
+        if target in ["Z", "#", "C", "K", "O"]:
             return
-        elif target == '.':
+        elif target == ".":
             self.regular_move(npc_name, dest, output, char_location)
-        elif target == 'H':
+        elif target == "H":
             return self.battle(npc_name, dest, output, char_location)
