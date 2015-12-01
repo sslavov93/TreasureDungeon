@@ -1,3 +1,4 @@
 TODO:
 
+# Add map print after every successful move
 # Explore the pygame library
