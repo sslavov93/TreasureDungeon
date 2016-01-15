@@ -1,4 +1,4 @@
 TODO:
 
-# Add map print after every successful move
 # Explore the pygame library
+# Use saved template code to generate grid as big as the dungeon map dimentions
