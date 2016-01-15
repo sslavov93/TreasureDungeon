@@ -4,7 +4,7 @@ from dungeon import Dungeon
 from map_validator import MapValidator
 
 
-class UserInterface():
+class CommandLineInterface():
 
     def __init__(self):
         self.command_list = {
@@ -113,5 +113,5 @@ exit - Closes the program"""
         return "Goodbye!"
 
 
-game = UserInterface()
+game = CommandLineInterface()
 game.start_game()
