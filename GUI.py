@@ -1,11 +1,24 @@
 import pygame
+import inputbox
 
 
-# # Define some colors
-# BLACK = (0, 0, 0)
-# WHITE = (255, 255, 255)
-# GREEN = (0, 255, 0)
-# RED = (255, 0, 0)
+class GraphicalUserInterface():
+    def __init__(self):
+        self.colors = {"Z": "black", "#": "black", ".": "white", "H": "green",
+                       "O": "red", "C": "brown", "K": "yellow"}
+        self.color_codes = {"black": (0, 0, 0), "white": (255, 255, 255),
+                            "green": (0, 255, 0), "red": (255, 0, 0),
+                            "blue": (0, 0, 255), "brown": (137, 76, 46),
+                            "yellow": (255, 255, 0)}
+
+    def __get_dungeon_dimentions(self):
+        pass
+
+pygame.init()
+ss = width, height = 1024, 600
+screen = pygame.display.set_mode(ss)
+inp = int(inputbox.ask(screen, 'Message'))
+
 
 # # This sets the WIDTH and HEIGHT of each grid location
 # WIDTH = 20
