@@ -1,5 +1,6 @@
 TODO:
 
+# Redesign the folder structure: entities, dungeon-specific, UserInterfaces
 # Explore the pygame library
 # Use saved template code to generate grid as big as the dungeon map dimentions
 
