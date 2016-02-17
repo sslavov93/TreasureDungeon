@@ -1,23 +1,56 @@
 import pygame
-import inputbox
 
 
 class GraphicalUserInterface():
-    def __init__(self):
-        self.colors = {"Z": "black", "#": "black", ".": "white", "H": "green",
-                       "O": "red", "C": "brown", "K": "yellow"}
-        self.color_codes = {"black": (0, 0, 0), "white": (255, 255, 255),
-                            "green": (0, 255, 0), "red": (255, 0, 0),
-                            "blue": (0, 0, 255), "brown": (137, 76, 46),
-                            "yellow": (255, 255, 0)}
+    colors = {"Z": "black", "#": "black", ".": "white", "H": "green",
+              "O": "red", "C": "brown", "K": "yellow",
+              "S": "blue", "N": "red"}
 
-    def __get_dungeon_dimentions(self):
+    def __init__(self, grid, map):
+        self.grid = grid
+        self.map = map
+
+    def draw_map(self):
+        gui = GraphicalUserInterface()
+        ss = width, height = 600, 600
+        screen = pygame.display.set_mode(ss)
+
+        WIDTH = 20
+        HEIGHT = 20
+        MARGIN = 5
+
+        pygame.display.set_caption("Treasure Dungeon")
+        pygame.init()
+        for row in range(10):
+                for column in range(19):
+                    color = gui.color_codes[gui.colors[self.grid[row][column]]]
+                    pygame.draw.rect(
+                        screen,
+                        color,
+                        [(MARGIN + WIDTH) * column + MARGIN,
+                         (MARGIN + HEIGHT) * row + MARGIN,
+                         WIDTH, HEIGHT])
+
+                    # Loop until the user clicks the close button.
+        done = False
+
+        # # Used to manage how fast the screen updates
+        # clock = pygame.time.Clock()
+
+        pygame.display.flip()
+
+        # -------- Main Program Loop -----------
+        while not done:
+            for event in pygame.event.get():  # User did something
+                if event.type == pygame.QUIT:  # If user clicked close
+                    done = True  # Flag that we are done so we exit this loop
+            # Go ahead and update the screen with what we've drawn.
+        # Be IDLE friendly. If you forget this line, the program will 'hang'
+        # on exit.
+        pygame.quit()
+
+    def move(self):
         pass
-
-pygame.init()
-ss = width, height = 1024, 600
-screen = pygame.display.set_mode(ss)
-inp = int(inputbox.ask(screen, 'Message'))
 
 
 # # This sets the WIDTH and HEIGHT of each grid location
