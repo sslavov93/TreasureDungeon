@@ -2,13 +2,15 @@ from weapon import Weapon
 from hero import Hero
 from dungeon import Dungeon
 from map_validator import MapValidator
+import sys
+import os
 
 
 class CommandLineInterface():
 
     def __init__(self):
         self.command_list = {
-            "load_map": self.load_map,
+            # "load_map": self.load_map,
             "show_map": self.display_map,
             "create_hero": self.create_character,
             "known_as": self.known_as,
@@ -47,8 +49,8 @@ exit - Closes the program"""
         self.input = input("--> ").strip().split(" ")
         return self.input
 
-    def load_map(self):
-        map_path = self.input[1]
+    def load_map(self, map_path):
+        # map_path = self.input[1]
         self.validator = MapValidator(map_path)
         if not self.validator.validate_map():
             return self.validator.generate_message()
@@ -113,5 +115,14 @@ exit - Closes the program"""
         return "Goodbye!"
 
 
-game = CommandLineInterface()
-game.start_game()
+def run():
+    map_location = sys.argv[1] if len(sys.argv) > 1 else None
+    game = CommandLineInterface()
+    if map_location and os.path.exists(map_location):
+        if not game.map_loaded:
+            game.load_map(map_location)
+            if game.map_loaded:
+                game.start_game()
+    return None
+
+run()
