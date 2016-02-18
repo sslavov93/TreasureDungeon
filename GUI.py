@@ -1,4 +1,5 @@
 import pygame
+from map_validator import MapValidator
 
 
 class GraphicalUserInterface():
@@ -6,9 +7,9 @@ class GraphicalUserInterface():
               "O": "red", "C": "brown", "K": "yellow",
               "S": "blue", "N": "red"}
 
-    def __init__(self, grid, map):
-        self.grid = grid
-        self.map = map
+    def __init__(self, map_location):
+        self.validator = MapValidator(map_location)
+        self.map_valid = False
 
     def draw_map(self):
         gui = GraphicalUserInterface()
