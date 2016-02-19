@@ -10,7 +10,6 @@ class CommandLineInterface():
 
     def __init__(self):
         self.command_list = {
-            # "load_map": self.load_map,
             "show_map": self.display_map,
             "create_hero": self.create_character,
             "known_as": self.known_as,
@@ -25,8 +24,7 @@ class CommandLineInterface():
         self.map_loaded = False
         self.validator = None
         self.input = None
-        self.help = """load_map <mapfile.txt> - Creates new dungeon with the map in mapfile
-show_map - Displays current dungeon map
+        self.help = """show_map - Displays current dungeon map
 create_hero <Name> <Health> <Nickname> - Creates hero with entered attributes
 spawn_hero <Username> - Spawns hero with specified username into the dungeon
 known_as - Displays name and nickname of hero
@@ -50,7 +48,6 @@ exit - Closes the program"""
         return self.input
 
     def load_map(self, map_path):
-        # map_path = self.input[1]
         self.validator = MapValidator(map_path)
         if not self.validator.validate_map():
             return self.validator.generate_message()
