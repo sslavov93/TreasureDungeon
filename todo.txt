@@ -1,11 +1,5 @@
 TODO:
 
-# Redesign the CLI script to conform to the new workflow
 # Design the GUI script to conform to the new workflow
+# Explore the possibility of keyboard arrows input
 # Redesign the folder structure: entities, dungeon-specific, UserInterfaces
-# Explore the pygame library
-# Use saved template code to generate grid as big as the dungeon map dimentions
-
-Workflow:
-
-start scripts with 1 additional argument - /full/path/to/map/file.txt
